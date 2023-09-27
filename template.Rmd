@@ -1,7 +1,78 @@
 ---
-title: "simple document"
+title: "data importing"
 author: "Shihui Peng"
 date: "2023-09-27"
 output: github_document
 ---
+
+```{r, message=FALSE, echo=FALSE}
+library(tidyverse)
+```
+The function we are going to use is in the readr package, which is loaded by default by the Tidyverse.
+
+# Import the `FAS_litters.csv` csv using a relative path.
+
+**read_csv():** first, tell 'read_csv' where to find this file, in (). If we put all datasets in this corresponding R project folder, we can use this relative path ("data/FAS_litters.csv")
+
+```{r}
+litters_df =
+  read_csv("data/FAS_litters.csv")
+
+litters_df = 
+  janitor::clean_names(litters_df)
+```
+
+**litters_df = janitor::clean_names(litters_df):**
+if the name has space, we can switch the name into snake case with this code.
+Eg. Litter Number -> litter_number; Gd0 Weight -> gd0_weight; etc. 
+
+# Import the same dataset using an absolute path.
+
+```{r}
+litter_df_abs = 
+  read_csv("~/Desktop/data_wrangling_i/data/FAS_litters.csv")
+```
+
+This might work, but if we move this r project folder to another place, the relative path does not change (the direction is still from this project to this data file), but the absolute path would change. So litter_df is working. but litter_df_abs is not working in this way.
+
+Therefore, **use relative path in a project** and **have all you need in the same place** to make things easy and your code reproducible.
+
+## Learning assessment for importing dataset FAS_pups.csv
+```{r learning_assessment_import_dataset}
+pups_df = 
+  read_csv("data/FAS_pups.csv")
+
+pups_df =
+  janitor::clean_names(pups_df)
+```
+
+# Look at data
+```{r}
+litters_df
+
+head(litters_df)
+
+tail(litters_df)
+```
+
+* **litters_df**: show 1st 10 rows by default, might not show not all of the columns
+* **head(litters_df)**: show 1st six rows
+* **tail(litters_df)**: show bottom six rows. more useful b/c when something goes wrong, something like weird missing or weird structure would often happen in the bottom rows
+
+```{r, eval=FALSE}
+view(litters_df)
+```
+
+If you want to look at the entire data set, use **view()**. A separate window will pull up and we can scroll through it.
+
+# Look at a data summary
+
+```{r}
+str(litters_df)
+
+skimr::skim(litters_df)
+```
+
+* **str(litters_df)**: looks at the structure of the data frame
+* **skimr::skim(litters_df)**: useful for 1st time to look at a dataset. can give info about variable type, min, max, empty, n, mean, sd, p0/25/50/75/100, histograms
 
