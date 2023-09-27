@@ -76,3 +76,54 @@ skimr::skim(litters_df)
 * **str(litters_df)**: looks at the structure of the data frame
 * **skimr::skim(litters_df)**: useful for 1st time to look at a dataset. can give info about variable type, min, max, empty, n, mean, sd, p0/25/50/75/100, histograms
 
+# Options in `read_*`
+
+## `skip` and `col_names`
+
+```{r}
+litters_df =
+  read_csv(
+    "data/FAS_litters.csv",
+    skip = 10,
+    col_names = FALSE
+  )
+```
+
+* **skip=**: read_csv assumes the 1st row in us data set is variable names and it starts reading things in from the very top row. If do *"skip=10"*, 1st 10 rows would be skipped. Now the 11th row is assumed as a collection of variable names by default. This would make troubles.
+* **col_names = FALSE**: r would make up its own column names, such as x1, x2, .... But it still read in the last rows that we have here.
+  * When you have a dataset which 1st 10 rows are variable explanations or data dictionary, we can skip these 10 rows and start importing us data. The 11th row would not be the variable name row but the 1st row of record we need.
+  
+## `na = c()`
+
+```{r}
+litters_df =
+  read_csv(
+    "data/FAS_litters.csv",
+    na = c("NA", 99, " ", ".")
+  )
+
+litters_df
+```
+
+* **na = c(...)**: whenever you see NA, number value 99, space, or ., treat them as missing/NA
+
+## `col_types`
+
+```{r}
+litters_df =
+  read_csv(
+    "data/FAS_litters.csv",
+    col_types = 
+      cols(
+        'GD0 weight' = col_character(),Group = col_factor()
+      )
+  )
+
+litters_df
+```
+
+* r would by default guess what kinds of data for each column, but it won't look through all rows. So if needed, we can change or define the column types for specific columns.
+* **col_types = cols()** can be used:
+  * **'GD0 weight' = col_character()**: since there is a space in (GD0 Weight), we need to use "" to include this variable name. This code is changing the column type of GD0 weight to character.
+  * **Group = col_factor()**: changing the column type of Group to factor.
+  
