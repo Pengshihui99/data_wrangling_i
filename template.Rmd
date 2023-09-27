@@ -155,3 +155,16 @@ pulse_df =
 view(pulse_df)
 ```
 
+# Export data in a csv file: `write_csv`
+ Imagine that we have coded that "cleaned" data and need to export the result. (for now, just edit the variable names and then want to export)
+```{r}
+litters_df_cleaned =
+  read_csv("data/FAS_litters.csv")
+
+litters_df_cleaned = 
+  janitor::clean_names(litters_df_cleaned)
+
+write_csv(litters_df_cleaned, "data/litters_cleaned.csv")
+```
+
+**write_csv**: now a new csv file is exported to "data" folder (this located in our r project folder), and its name is 'litters_cleaned.csv'

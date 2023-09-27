@@ -249,7 +249,7 @@ litters_df =
     data. The 11th row would not be the variable name row but the 1st
     row of record we need.
 
-## Look at NA values: `na = c()`
+## `na = c()`
 
 ``` r
 litters_df =
@@ -267,6 +267,27 @@ litters_df =
     ## 
     ## ℹ Use `spec()` to retrieve the full column specification for this data.
     ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+``` r
+litters_df
+```
+
+    ## # A tibble: 49 × 8
+    ##    Group `Litter Number` `GD0 weight` `GD18 weight` `GD of Birth`
+    ##    <chr> <chr>                  <dbl>         <dbl>         <dbl>
+    ##  1 Con7  #85                     19.7          34.7            20
+    ##  2 Con7  #1/2/95/2               27            42              19
+    ##  3 Con7  #5/5/3/83/3-3           26            41.4            19
+    ##  4 Con7  #5/4/2/95/2             28.5          44.1            19
+    ##  5 Con7  #4/2/95/3-3             NA            NA              20
+    ##  6 Con7  #2/2/95/3-2             NA            NA              20
+    ##  7 Con7  #1/5/3/83/3-3/2         NA            NA              20
+    ##  8 Con8  #3/83/3-3               NA            NA              20
+    ##  9 Con8  #2/95/3                 NA            NA              20
+    ## 10 Con8  #3/5/2/2/95             28.5          NA              20
+    ## # ℹ 39 more rows
+    ## # ℹ 3 more variables: `Pups born alive` <dbl>, `Pups dead @ birth` <dbl>,
+    ## #   `Pups survive` <dbl>
 
 - **na = c(…)**: whenever you see NA, number value 99, space, or .,
   treat them as missing/NA
@@ -312,3 +333,62 @@ litters_df
     is changing the column type of GD0 weight to character.
   - **Group = col_factor()**: changing the column type of Group to
     factor.
+
+# Other file types
+
+## Import an xlsx file: `readxl package` and `read_excel()`
+
+``` r
+library(readxl)
+```
+
+Need to load `readxl package`. Better do this at the beginning.
+
+``` r
+mlb_df =
+  read_excel("data/mlb11.xlsx")
+```
+
+## Import an SAS file: `haven package` and `read_sas`
+
+``` r
+library(haven)
+```
+
+Need to load `haven package`. Better do this at the beginning.
+
+``` r
+pulse_df = 
+  read_sas("data/public_pulse_data.sas7bdat")
+
+view(pulse_df)
+```
+
+# Export data in a csv file: `write_csv`
+
+Imagine that we have coded that “cleaned” data and need to export the
+result. (for now, just edit the variable names and then want to export)
+
+``` r
+litters_df_cleaned =
+  read_csv("data/FAS_litters.csv")
+```
+
+    ## Rows: 49 Columns: 8
+    ## ── Column specification ────────────────────────────────────────────────────────
+    ## Delimiter: ","
+    ## chr (2): Group, Litter Number
+    ## dbl (6): GD0 weight, GD18 weight, GD of Birth, Pups born alive, Pups dead @ ...
+    ## 
+    ## ℹ Use `spec()` to retrieve the full column specification for this data.
+    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+``` r
+litters_df_cleaned = 
+  janitor::clean_names(litters_df_cleaned)
+
+write_csv(litters_df_cleaned, "data/litters_cleaned.csv")
+```
+
+**write_csv**: now a new csv file is exported to “data” folder (this
+located in our r project folder), and its name is ‘litters_cleaned.csv’
