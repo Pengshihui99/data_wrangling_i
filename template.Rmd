@@ -127,3 +127,31 @@ litters_df
   * **'GD0 weight' = col_character()**: since there is a space in (GD0 Weight), we need to use "" to include this variable name. This code is changing the column type of GD0 weight to character.
   * **Group = col_factor()**: changing the column type of Group to factor.
   
+# Other file types
+
+## Import an xlsx file: `readxl package` and `read_excel()`
+
+```{r}
+library(readxl)
+```
+ Need to load `readxl package`. Better do this at the beginning.
+ 
+```{r}
+mlb_df =
+  read_excel("data/mlb11.xlsx")
+```
+
+## Import an SAS file: `haven package` and `read_sas`
+
+```{r}
+library(haven)
+```
+Need to load `haven package`. Better do this at the beginning.
+
+```{r}
+pulse_df = 
+  read_sas("data/public_pulse_data.sas7bdat")
+
+view(pulse_df)
+```
+
