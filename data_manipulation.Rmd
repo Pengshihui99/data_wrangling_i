@@ -9,3 +9,81 @@ output: github_document
 library(tidyverse)
 ```
 
+Import FAS litters and pups.
+
+```{r}
+litters_df = 
+  read_csv("data/FAS_litters.csv")
+
+litters_df = 
+  janitor::clean_names(litters_df)
+
+pups_df = 
+  read_csv("data/FAS_pups.csv")
+
+pups_df = 
+  janitor::clean_names(pups_df)
+```
+
+# `select`
+
+```{r}
+select(litters_df, group, litter_number, gd0_weight)
+
+select(litters_df, gd0_weight, litter_number, group)
+
+select(litters_df, group, gd0_weight:gd_of_birth)
+
+select(litters_df, group, starts_with("pups"))
+```
+
+* **`select`**: is used to select columns. If want to extract only some columns, we can use this.
+when using it: **`select(data_frame_Im_working_on_now, column1_want_to_keep, column2_want_to_keep, ...)`**. If put in diff order, r will put these columns in the order we have them in. So we can reorganize data in this way.
+
+* select(litters_df, group, **gd0_weight : gd_of_birth**): keep group col & "A:B" here means we want everything between A and B
+
+* select(litters_df, group, **starts_with("pups")**): keep group col & "starts_with("ABC")" here means select everything that starts with ABC. There are also **`ends_with`** and **`contains`**
+
+## `select` and remove cols while keeping all other cols
+```{r}
+select(litters_df, - litter_number)
+
+select(litters_df, - starts_with("gd"))
+```
+
+* select(litters_df, **- litter_number**): remove "litter_number" and keep all of the other columns
+
+* select(litters_df, **- starts_with("gd")**): remove everything that starts with "gd" and keep all of the other columns
+
+
+## `select` and rename and `everything()`
+```{r}
+select(litters_df, group, litter_id = litter_number)
+
+select(litters_df, group, litter_id = litter_number, everything())
+
+rename(litters_df, litter_id = litter_number)
+
+select(litters_df, gd0_weight, everything())
+
+relocate(litters_df, litter_number)
+```
+
+* select(litters_df, group, **litter_id = litter_number**): keep group column and litter_number column, but rename 'litter_number' col to 'litter_id'
+
+* select(litters_df, group, litter_id = litter_number, **everything()**): keep group col & keep litter_number col, but rename 'litter_number' col to 'litter_id' & keep everything that I have not mentioned yet. 
+  * **rename(litters_df, litter_id = litter_number)** is also for renaming the variable and keeping everything else.
+
+* select(litters_df, gd0_weight, everything()): **reorder the cols**. Give gd0_weight first, and then the other cols. When i need to put cols in a diff order but still *keep everything else*, i can use this code.
+  * **relocate(litters_df, litter_number)** is also for bringing 'litter_number' first and keeping everything else.
+
+## `select` vs `pull`
+
+```{r}
+select(litters_df, group)
+
+pull(litters_df, group)
+```
+
+* **`select`**: get a *data frame* out and it doesn't care that there's only 1 col here.
+* **`pull`**: would break the tidyverse logic by extracting a col from your data frame. and the output is just like a vector floating around -- it *doesn't exist inside of a data frame* anymore
