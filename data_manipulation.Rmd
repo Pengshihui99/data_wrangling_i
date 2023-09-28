@@ -1,5 +1,5 @@
 ---
-title: "data_manipulation"
+title: "Data_Manipulation"
 author: "Shihui Peng"
 date: "2023-09-28"
 output: github_document
@@ -169,3 +169,27 @@ arrange(litters_df, group, gd0_weight)
 * **`arrange(litters_df, gd0_weight)`**: reorganizing and ordered based on gd0_weight, from lowest to the next lowest...(ascending).
   * if want descending order: **`arrange(litters_df, desc(gd0_weight))`**
 * **`arrange(litters_df, group, gd0_weight)`**: if we have nested data structures, this is helpful when we have groups. Here, first put 'group' in alphabetical order. Then, inside each group of 'group', put things in numeric order for gd0_weight.
+
+
+# Pipes
+
+We have 2 ways for manipulate data with several steps:(1) define intermediate datasets (or overwrite data at each stage) and (2) nest function calls. These are both confusing and bad: the first gets confusing and clutters our workspace, and the second has to be read inside out.
+
+Piping solves this problem.
+```{r}
+litters_df = 
+  read_csv("data/FAS_litters.csv") |> 
+  janitor::clean_names() |> 
+  select(-starts_with("pups")) |> 
+  mutate(
+    group = str_to_lower(group),
+    wt_gain = gd18_weight - gd0_weight
+  ) |> 
+  drop_na(wt_gain) |> 
+  arrange(group, wt_gain)
+```
+
+* `|>` is the same as `%>%` in pipe operator. `|>` can only be used in R4.1.0 or newer versions.
+* shift+command+m to get `|>`
+  * don't need to put "litters_df" into the janitor::clean_names(), r would know if we use pipe operator.
+  * don't need to specify which data frame i'm working on. Eg. when doing select, no need to put "select(litters_df, xxxx)"

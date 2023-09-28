@@ -1,4 +1,4 @@
-data_manipulation
+Data_Manipulation
 ================
 Shihui Peng
 2023-09-28
@@ -663,3 +663,43 @@ arrange(litters_df, group, gd0_weight)
   structures, this is helpful when we have groups. Here, first put
   ‘group’ in alphabetical order. Then, inside each group of ‘group’, put
   things in numeric order for gd0_weight.
+
+# Pipes
+
+We have 2 ways for manipulate data with several steps:(1) define
+intermediate datasets (or overwrite data at each stage) and (2) nest
+function calls. These are both confusing and bad: the first gets
+confusing and clutters our workspace, and the second has to be read
+inside out.
+
+Piping solves this problem.
+
+``` r
+litters_df = 
+  read_csv("data/FAS_litters.csv") |> 
+  janitor::clean_names() |> 
+  select(-starts_with("pups")) |> 
+  mutate(
+    group = str_to_lower(group),
+    wt_gain = gd18_weight - gd0_weight
+  ) |> 
+  drop_na(wt_gain) |> 
+  arrange(group, wt_gain)
+```
+
+    ## Rows: 49 Columns: 8
+    ## ── Column specification ────────────────────────────────────────────────────────
+    ## Delimiter: ","
+    ## chr (2): Group, Litter Number
+    ## dbl (6): GD0 weight, GD18 weight, GD of Birth, Pups born alive, Pups dead @ ...
+    ## 
+    ## ℹ Use `spec()` to retrieve the full column specification for this data.
+    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+- `|>` is the same as `%>%` in pipe operator. `|>` can only be used in
+  R4.1.0 or newer versions.
+- shift+command+m to get `|>`
+  - don’t need to put “litters_df” into the janitor::clean_names(), r
+    would know if we use pipe operator.
+  - don’t need to specify which data frame i’m working on. Eg. when
+    doing select, no need to put “select(litters_df, xxxx)”
