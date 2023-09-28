@@ -154,3 +154,18 @@ mutate(litters_df,
   * **`group = str_to_lower(group)`**: overwriting an old variable. Here, the new 'group' is to make the old 'group' into lower case of whatever the variable is.
 
 * We can create a new variable and immediately refer to (or change) it.
+
+
+# `arrange`
+
+If my data is not organized in a helpful way, i can use `arrange`.
+
+```{r}
+arrange(litters_df, gd0_weight)
+
+arrange(litters_df, group, gd0_weight)
+```
+
+* **`arrange(litters_df, gd0_weight)`**: reorganizing and ordered based on gd0_weight, from lowest to the next lowest...(ascending).
+  * if want descending order: **`arrange(litters_df, desc(gd0_weight))`**
+* **`arrange(litters_df, group, gd0_weight)`**: if we have nested data structures, this is helpful when we have groups. Here, first put 'group' in alphabetical order. Then, inside each group of 'group', put things in numeric order for gd0_weight.
