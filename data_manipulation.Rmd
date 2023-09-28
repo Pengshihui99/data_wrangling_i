@@ -87,3 +87,53 @@ pull(litters_df, group)
 
 * **`select`**: get a *data frame* out and it doesn't care that there's only 1 col here.
 * **`pull`**: would break the tidyverse logic by extracting a col from your data frame. and the output is just like a vector floating around -- it *doesn't exist inside of a data frame* anymore
+
+
+# `filter`
+
+Get rid of rows using `filter()`
+
+```{r}
+filter(litters_df, group == "Con7")
+
+filter(litters_df, group != "Con7")
+
+filter(litters_df, gd0_weight > 20)
+
+filter(litters_df, group == "Con7" | group == "Con8")
+
+filter(litters_df, group %in% c("Con7", "Con8"))
+
+filter(litters_df, !(group == "Con7"))
+
+filter(litters_df, group %in% c("Con7", "Con8"), gd0_weight > 20)
+
+filter(litters_df, group %in% c("Con7", "Con8") & gd0_weight > 20)
+```
+
+* **filter(litters_df, group == "Con7")**: i want to keep inside everything here where group is equal to this specific value "Con7".
+  * **`=`** means put this value into this variable VS **`==`** means check whether or not this thing is true/equal to. Filter would keep everything that this turns out to be true.
+  * **`!=`** means check whether or not this is not equal to. So if run `filter(litters_df, group != "Con7")`, the output would be everything that group is not equal to Con7.
+
+* We will often filter using comparison operators: **`<, <=, >, >=, ==, !=`**
+
+* **`filter(litters_df, group == "Con7" | group == "Con8")`**: want to keep more than 1 col. **`|`** is saying 'if this is true OR if the next thing is true, we are gonna keep the result here.
+  * **`filter(litters_df, group %in% c("Con7", "Con8"))`** is another way to do this. 
+  
+* **`filter(litters_df, !(group == "Con7"))`**: if want to negate the entire thing. It would give the opposite in the () when the thing in () is true. This is similar with and get the same output as using `group != "Con7"`
+
+* **`filter(litters_df, group %in% c("Con7", "Con8"), gd0_weight > 20)`**: can use this to do multiple condition. 
+  * Here means "AND", and when using "|" it means "OR". 
+  * `filter(litters_df, group %in% c("Con7", "Con8") & gd0_weight > 20)` are the same with it.
+
+## `drop_na`
+
+A very common filtering step requires you to omit missing observations. You can do this with filter, but I recommend using **drop_na** from the *tidyr package*:
+```{r}
+drop_na(litters_df)
+
+drop_na(litters_df, gd0_weight)
+```
+
+* **`drop_na(litters_df)`** will remove any row with a missing value in data frame litters_df
+* **`drop_na(litters_df, gd0_weight)`** will remove rows for which gd0_weight is missing.
