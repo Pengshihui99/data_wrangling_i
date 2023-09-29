@@ -9,3 +9,29 @@ output: github_document
 library(tidyverse)
 ```
 
+# PULSE data
+
+The observation time is a variable that has been encoded into column names. I need to switch this from wide format to long format. In **wide format** data, each column may represent a specific time point, category, or variable, and each row typically represents an individual or case. **Long format** means that you have a single column to represent the time or observation variable and another column to represent the corresponding values associated with that time or observation.
+
+```{r}
+pulse_df =
+  haven::read_sas("data/public_pulse_data.sas7bdat") |> 
+  janitor::clean_names() |> 
+  pivot_longer(
+    bdi_score_bl : bdi_score_12m,
+    names_to = "visit",
+    values_to = "bdi_score",
+    names_prefix = "bdi_score_",
+  ) |> 
+  mutate(
+    visit = replace(visit, visit == "bl", "00m")
+  )
+```
+
+* **`pivot_longer`**: critical for going from wide format to long format. in tidyr package.(tidyverse package has included it)
+  * **`bdi_score_bl : bdi_score_12m`**: tell r these are the columns right now in wide format and need to be in long format.
+  * **`names_to = "visit"`**: r is going to take each of columns specified above and put them in a new column. then we use this code to tell r what is the variable name for this new column going to be.
+  * **`values_to = "bdi_score`**: r is going to take the actual numbers which belongs to each of above specified cols and put those to its own column (this col will store the corresponding values from the cols in the specified range). then we use this code to tell r what is the variable name of this new col going to be.
+  * **`names_prefix = "bdi_score_"`**: this code can get rid of the prefix we don't need. All values for visit col starts w a prefix "bdi_score_", but we want to get the exact means for this cell.
+  * **`mutate(visit = replace(visit, visit == "bl", "00m"))`**: we want to change "bl" as baseline to 00m. use mutate to change or add variable (here, "visit"). 
+    * `replace(variable, check if visit value is "bl", if yes then replace by "00m")`
