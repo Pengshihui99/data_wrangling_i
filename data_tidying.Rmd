@@ -1,0 +1,11 @@
+---
+title: "Data tidy"
+author: "Shihui Peng"
+date: "2023-09-29"
+output: github_document
+---
+
+```{r,message=FALSE, echo=FALSE}
+library(tidyverse)
+```
+
