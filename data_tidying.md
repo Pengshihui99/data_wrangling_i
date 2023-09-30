@@ -190,3 +190,66 @@ lotr_df =
     all other columns from the original data frame. This is a convenient
     way to reorder columns in a data frame while ensuring you don’t lose
     any columns in the process.
+
+## join data sets – revisit FAS
+
+``` r
+litters_df =
+  read_csv("data/FAS_litters.csv") |> 
+  janitor::clean_names() |> 
+  mutate(wt_gain = gd18_weight - gd0_weight) |> 
+  select(litter_number, group, wt_gain) |> 
+  separate(group, into = c("dose", "day_of_tx"), 3)
+```
+
+    ## Rows: 49 Columns: 8
+    ## ── Column specification ────────────────────────────────────────────────────────
+    ## Delimiter: ","
+    ## chr (2): Group, Litter Number
+    ## dbl (6): GD0 weight, GD18 weight, GD of Birth, Pups born alive, Pups dead @ ...
+    ## 
+    ## ℹ Use `spec()` to retrieve the full column specification for this data.
+    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+``` r
+pups_df = 
+  read_csv("data/FAS_pups.csv") |> 
+  janitor::clean_names() |> 
+  mutate(
+    sex = case_match(
+      sex, 1 ~ "male", 2~ "female"
+      )
+    )
+```
+
+    ## Rows: 313 Columns: 6
+    ## ── Column specification ────────────────────────────────────────────────────────
+    ## Delimiter: ","
+    ## chr (1): Litter Number
+    ## dbl (5): Sex, PD ears, PD eyes, PD pivot, PD walk
+    ## 
+    ## ℹ Use `spec()` to retrieve the full column specification for this data.
+    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+``` r
+fas_df = 
+  left_join(pups_df, litters_df, by = "litter_number")
+```
+
+- **`separate`**: we can find that group col contain 2 info, dose level
+  (Con) and when ppl get dose (7/8). use separate to tell r: what
+  variable we want to separate (`group`), what do we want to separate it
+  into (`into = c("dose", "day_of_tx")`), and where do we want to do
+  this separation (`3`).
+- There are four major ways join dataframes x and y:
+  - **Inner**: keeps data that appear in both x and y
+  - **Left**: keeps data that appear in x
+  - **Right**: keeps data that appear in y
+  - **Full**: keeps data that appear in either x or y
+    - `left_join()` are the most common, because they add data from a
+      smaller table y into a larger table x without removing anything
+      from x.
+- Note that joining is not particularly amenable to the \|\> operator
+  because it is fundamentally non-linear: two separate datasets are
+  coming together, rather than a single dataset being processed in a
+  step-by-step fashion.
