@@ -24,7 +24,8 @@ pulse_df =
     names_prefix = "bdi_score_",
   ) |> 
   mutate(
-    visit = replace(visit, visit == "bl", "00m")
+    visit = replace(visit, visit == "bl", "00m"),
+    visit = factor(visit)
   )
 ```
 
@@ -33,5 +34,30 @@ pulse_df =
   * **`names_to = "visit"`**: r is going to take each of columns specified above and put them in a new column. then we use this code to tell r what is the variable name for this new column going to be.
   * **`values_to = "bdi_score`**: r is going to take the actual numbers which belongs to each of above specified cols and put those to its own column (this col will store the corresponding values from the cols in the specified range). then we use this code to tell r what is the variable name of this new col going to be.
   * **`names_prefix = "bdi_score_"`**: this code can get rid of the prefix we don't need. All values for visit col starts w a prefix "bdi_score_", but we want to get the exact means for this cell.
-  * **`mutate(visit = replace(visit, visit == "bl", "00m"))`**: we want to change "bl" as baseline to 00m. use mutate to change or add variable (here, "visit"). 
-    * `replace(variable, check if visit value is "bl", if yes then replace by "00m")`
+  * **`mutate(old_variable = replace(old_variable, condition, replacement_variable))`**: we want to change "bl" as baseline to 00m. use mutate to change or add variable (here, "visit"). 
+    * `replace(visit, check if visit value is "bl", if yes then replace by "00m")`
+    * `factor(visit)`: converting visit to a factor variable. It’s possible to want visit to be a numeric variable instead.
+    
+### learning assessment
+In the litters data, the variables gd0_weight and gd18_weight give the weight of the mother mouse on gestational days 0 and 18. Write a data cleaning chain that retains only litter_number and these columns; produces new variables gd and weight; and makes gd a numeric variable taking values 0 and 18 (for the last part, you might want to use recode …). Is this version “tidy”?
+
+```{r}
+litters_df =
+  read_csv("data/FAS_litters.csv") |> 
+  janitor::clean_names() |> 
+  select(litter_number, ends_with("weight")) |> 
+  pivot_longer(
+    gd0_weight:gd18_weight, 
+    names_to = "gd",
+    values_to = "weight",
+    names_prefix = "gd"
+  ) |> 
+  mutate(
+    gd = recode(gd, "0_weight" = 0, "18_weight" = 18)
+  )
+```
+
+we can also use **case_match** when we want to replace multiple things in a data set. **`gd = case_match(gd, "0_weight" ~ 0, "18_weight" ~ 18)`**. This is like, when r see this, replace w this; when r see that, replace w that; etc.
+
+In one sense, this is “tidy” because I have a variable for day and a variable for weight rather that using values in my variable names. However, it’s less useful if I’m interested in computing or analyzing weight gain during pregnancy.
+
