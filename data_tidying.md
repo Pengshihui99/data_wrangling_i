@@ -5,6 +5,8 @@ Shihui Peng
 
 # PULSE data
 
+## pivot_longer
+
 The observation time is a variable that has been encoded into column
 names. I need to switch this from wide format to long format. In **wide
 format** data, each column may represent a specific time point,
@@ -96,3 +98,56 @@ In one sense, this is “tidy” because I have a variable for day and a
 variable for weight rather that using values in my variable names.
 However, it’s less useful if I’m interested in computing or analyzing
 weight gain during pregnancy.
+
+## pivot_wider
+
+``` r
+analysis_result = 
+  tibble(
+    group = c("treatment", "treatment", "placebo", "placebo"),
+    time = c("pre", "post", "pre", "post"),
+    mean = c(4, 8, 3.5, 4)
+  )
+analysis_result
+```
+
+    ## # A tibble: 4 × 3
+    ##   group     time   mean
+    ##   <chr>     <chr> <dbl>
+    ## 1 treatment pre     4  
+    ## 2 treatment post    8  
+    ## 3 placebo   pre     3.5
+    ## 4 placebo   post    4
+
+This is the correct format for additional analysis or visualization, but
+doesn’t facilitate quick comparisons for human readers.
+
+An alternative presentation of the same data might have groups in rows,
+times in columns, and mean values in table cells. This is decidedly
+non-tidy; to get there from here we’ll need to use **`pivot_wider`**,
+which is the inverse of pivot_longer:
+
+``` r
+pivot_wider(
+  analysis_result, 
+  names_from = "time", 
+  values_from = "mean")
+```
+
+    ## # A tibble: 2 × 3
+    ##   group       pre  post
+    ##   <chr>     <dbl> <dbl>
+    ## 1 treatment   4       8
+    ## 2 placebo     3.5     4
+
+# knitr::kable()
+
+We’re pretty much there now – in some cases you might use select to
+reorder columns, and (depending on your goal) use **`knitr::kable()`**
+to produce a nicer table for reading.
+
+``` r
+analysis_result = knitr::kable(analysis_result)
+```
+
+# bind rows
