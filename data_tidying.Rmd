@@ -92,5 +92,37 @@ We’re pretty much there now – in some cases you might use select to reorder 
 analysis_result = knitr::kable(analysis_result)
 ```
 
-
 # bind rows
+
+import LoTR_Words data. `read_excel` is from readxl package VS `read_xlsx` is from readxlsx package. 
+```{r}
+fellowship_df = 
+  readxl::read_excel("data/LoTR_Words.xlsx", range = "B3:D6") |> 
+  mutate(movie = "fellowship")
+
+two_towers_df = 
+  readxl::read_excel("data/LoTR_Words.xlsx", range = "F3:H6") |> 
+  mutate(movie = "two towers")
+
+return_of_the_king_df = 
+  readxl::read_excel("data/LoTR_Words.xlsx", range = "J3:L6") |> 
+  mutate(movie = "return of the king")
+
+lotr_df =
+  bind_rows(fellowship_df, two_towers_df, return_of_the_king_df) |> 
+  janitor::clean_names() |> 
+  pivot_longer(
+    female:male,
+    names_to = "gender",
+    values_to = "word"
+  ) |> 
+  relocate(movie)
+```
+
+* one thing that is helpful for excel package: we can specify which cols we want to read and can specify this w **range** function: `range = "B3:D6"` -- want to read wi this region.
+* **`bind_rows`**: bind rows together.
+* **`relocate(movie)`**: relocate movie to the 1st col. see more use in ?relocate. 
+  * We can also use **`select(movie, everything())`** the resulting data frame will have the "movie" column as its first column, followed by all other columns from the original data frame. This is a convenient way to reorder columns in a data frame while ensuring you don't lose any columns in the process.
+
+
+
